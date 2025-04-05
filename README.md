@@ -10,6 +10,8 @@ Application bancaire multilingue moderne développée avec Flask.
 - Gestion des comptes
 - Transactions en temps réel
 - Design adaptatif pour tous les appareils
+- Support HTTPS avec SSL/TLS
+- Configuration Nginx sécurisée
 
 ## Technologies utilisées
 
@@ -18,6 +20,8 @@ Application bancaire multilingue moderne développée avec Flask.
 - Bootstrap 5
 - Select2 pour le sélecteur de langue
 - SQLite pour la base de données
+- Nginx comme proxy inverse
+- SSL/TLS pour la sécurité
 
 ## Installation
 
@@ -40,12 +44,30 @@ venv\Scripts\activate  # Sur Windows
 pip install -r requirements.txt
 ```
 
-4. Lancer l'application :
+4. Configuration Nginx (optionnel) :
+```bash
+sudo cp nginx.conf /etc/nginx/sites-available/goldeaf
+sudo ln -sf /etc/nginx/sites-available/goldeaf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+5. Lancer l'application :
 ```bash
 python app.py
 ```
 
-L'application sera accessible à l'adresse : http://localhost:5000
+L'application sera accessible à :
+- http://localhost:5000 (accès direct)
+- https://goldeaf.local (via Nginx, nécessite configuration)
+
+## Sécurité
+
+- Support HTTPS complet
+- En-têtes de sécurité HTTP
+- Protection contre XSS et CSRF
+- Limitation de la taille des requêtes
+- Certificats SSL/TLS
 
 ## Contribution
 
