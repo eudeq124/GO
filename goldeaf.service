@@ -1,0 +1,13 @@
+[Unit]
+Description=GOLDEAF Bank Application
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/goldeaf_bank
+Environment="PATH=/var/www/goldeaf_bank/venv/bin"
+ExecStart=/var/www/goldeaf_bank/venv/bin/gunicorn --workers 4 --bind unix:goldeaf.sock -m 007 app:app
+
+[Install]
+WantedBy=multi-user.target
