@@ -5,6 +5,7 @@ APP_NAME="goldeaf_bank"
 DEPLOY_PATH="/var/www/$APP_NAME"
 REPO_URL="https://github.com/eudeq124/GOLDEAF.git"
 PYTHON_VERSION="python3"
+BACKUP_DIR="/var/backups/$APP_NAME"
 
 # Couleurs pour les messages
 GREEN='\033[0;32m'
@@ -21,12 +22,14 @@ command -v nginx >/dev/null 2>&1 || { echo -e "${RED}Nginx n'est pas installé${
 # Installation des paquets système nécessaires
 echo "Installation des paquets système..."
 sudo apt-get update
-sudo apt-get install -y python3-venv python3-dev build-essential libssl-dev libffi-dev
+sudo apt-get install -y python3-venv python3-dev build-essential libssl-dev libffi-dev sqlite3
 
 # Création du répertoire de déploiement
 echo "Création du répertoire de déploiement..."
 sudo mkdir -p $DEPLOY_PATH
+sudo mkdir -p $BACKUP_DIR
 sudo chown -R $USER:$USER $DEPLOY_PATH
+sudo chown -R www-data:www-data $BACKUP_DIR
 
 # Clonage du dépôt
 echo "Clonage du dépôt..."
@@ -47,6 +50,7 @@ pip install gunicorn
 echo "Configuration des permissions..."
 sudo chown -R www-data:www-data $DEPLOY_PATH
 sudo chmod -R 755 $DEPLOY_PATH
+sudo chmod +x backup.sh
 
 # Configuration de Nginx
 echo "Configuration de Nginx..."
@@ -57,9 +61,15 @@ sudo rm -f /etc/nginx/sites-enabled/default
 # Configuration du service systemd
 echo "Configuration du service systemd..."
 sudo cp goldeaf.service /etc/systemd/system/
+sudo cp goldeaf-backup.service /etc/systemd/system/
+sudo cp goldeaf-backup.timer /etc/systemd/system/
+
+# Activation des services
 sudo systemctl daemon-reload
 sudo systemctl enable goldeaf
+sudo systemctl enable goldeaf-backup.timer
 sudo systemctl start goldeaf
+sudo systemctl start goldeaf-backup.timer
 
 # Vérification de la configuration Nginx
 echo "Vérification de la configuration Nginx..."
@@ -68,3 +78,5 @@ sudo nginx -t && sudo systemctl restart nginx
 echo -e "${GREEN}Déploiement terminé !${NC}"
 echo "L'application devrait être accessible à l'adresse configurée dans Nginx"
 echo "Vérifiez les logs avec : sudo journalctl -u goldeaf"
+echo "Les sauvegardes sont configurées et s'exécuteront quotidiennement à 2h du matin"
+echo "Vérifiez les sauvegardes dans : $BACKUP_DIR"

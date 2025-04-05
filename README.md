@@ -112,6 +112,49 @@ sudo nginx -t
 - Fichiers de l'application : `/var/www/goldeaf_bank/`
 - Service systemd : `goldeaf.service`
 
+## Sauvegardes
+
+Les sauvegardes sont automatiques et configurées comme suit :
+
+### Éléments sauvegardés
+- Base de données SQLite
+- Fichiers de configuration
+- Fichiers statiques
+
+### Fréquence des sauvegardes
+- Quotidienne : tous les jours à 2h du matin
+- Hebdomadaire : chaque dimanche
+- Mensuelle : premier jour du mois
+
+### Rétention
+- Sauvegardes quotidiennes : 7 jours
+- Sauvegardes hebdomadaires : 30 jours
+- Sauvegardes mensuelles : 365 jours
+
+### Emplacement
+Toutes les sauvegardes sont stockées dans `/var/backups/goldeaf_bank/` avec la structure suivante :
+```
+/var/backups/goldeaf_bank/
+├── daily/    # Sauvegardes quotidiennes
+├── weekly/   # Sauvegardes hebdomadaires
+└── monthly/  # Sauvegardes mensuelles
+```
+
+### Commandes utiles
+```bash
+# Vérifier le statut du service de sauvegarde
+sudo systemctl status goldeaf-backup.timer
+
+# Exécuter une sauvegarde manuelle
+sudo systemctl start goldeaf-backup.service
+
+# Voir les logs de sauvegarde
+sudo journalctl -u goldeaf-backup.service
+
+# Lister les sauvegardes
+ls -l /var/backups/goldeaf_bank/daily/
+```
+
 ## Contribution
 
 Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à soumettre une pull request.

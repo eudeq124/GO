@@ -1,0 +1,9 @@
+[Unit]
+Description=GOLDEAF Bank Backup Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/var/www/goldeaf_bank/backup.sh
+User=www-data
+Group=www-data
