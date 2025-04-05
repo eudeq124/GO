@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h3>Solde total de la banque</h3>
+                <div class="balance-display">
+                    {{ "%.2f"|format(solde_total) }} €
+                </div>
+                <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editBankBalanceModal">
+                    <i class="fas fa-edit"></i> Modifier le solde
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Statistiques</h3>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Clients actifs
+                        <span class="badge bg-primary rounded-pill">{{ stats.clients_actifs }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Cartes actives
+                        <span class="badge bg-primary rounded-pill">{{ stats.cartes_actives }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Transactions aujourd'hui
+                        <span class="badge bg-primary rounded-pill">{{ stats.transactions_jour }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="dashboard-card">
+                <h3>Gestion des clients</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Solde</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for client in clients %}
+                            <tr>
+                                <td>{{ client.nom }} {{ client.prenom }}</td>
+                                <td>{{ client.email }}</td>
+                                <td>{{ "%.2f"|format(client.solde) }} €</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="showClientModal('{{ client.id }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" onclick="showDepositModal('{{ client.id }}')">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="showWithdrawModal('{{ client.id }}')">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Transactions en attente</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Client</th>
+                                <th>Type</th>
+                                <th>Montant</th>
+                                <th>Code Admin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions_attente %}
+                            <tr>
+                                <td>{{ transaction.date.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ transaction.expediteur.nom }} {{ transaction.expediteur.prenom }}</td>
+                                <td>{{ transaction.type }}</td>
+                                <td>{{ "%.2f"|format(transaction.montant) }} €</td>
+                                <td>{{ transaction.code_admin }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" onclick="approveTransaction('{{ transaction.id }}')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectTransaction('{{ transaction.id }}')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Édition Solde Banque -->
+<div class="modal fade" id="editBankBalanceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifier le solde de la banque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBankBalanceForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nouveau solde</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="nouveau_solde" step="0.01" required>
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Dépôt -->
+<div class="modal fade" id="depositModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Effectuer un dépôt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="depositForm">
+                    <input type="hidden" name="client_id" id="depositClientId">
+                    <div class="mb-3">
+                        <label class="form-label">Montant du dépôt</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="montant" step="0.01" required>
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Effectuer le dépôt</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Retrait -->
+<div class="modal fade" id="withdrawModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Effectuer un retrait</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="withdrawForm">
+                    <input type="hidden" name="client_id" id="withdrawClientId">
+                    <div class="mb-3">
+                        <label class="form-label">Montant du retrait</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" name="montant" step="0.01" required>
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Effectuer le retrait</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showClientModal(clientId) {
+    // Implémenter l'édition des informations client
+}
+
+function showDepositModal(clientId) {
+    document.getElementById('depositClientId').value = clientId;
+    new bootstrap.Modal(document.getElementById('depositModal')).show();
+}
+
+function showWithdrawModal(clientId) {
+    document.getElementById('withdrawClientId').value = clientId;
+    new bootstrap.Modal(document.getElementById('withdrawModal')).show();
+}
+
+function approveTransaction(transactionId) {
+    if (confirm('Voulez-vous approuver cette transaction ?')) {
+        fetch(`/admin/approve-transaction/${transactionId}`, {
+            method: 'POST'
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  location.reload();
+              } else {
+                  alert('Erreur lors de l\'approbation de la transaction');
+              }
+          });
+    }
+}
+
+function rejectTransaction(transactionId) {
+    if (confirm('Voulez-vous rejeter cette transaction ?')) {
+        fetch(`/admin/reject-transaction/${transactionId}`, {
+            method: 'POST'
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  location.reload();
+              } else {
+                  alert('Erreur lors du rejet de la transaction');
+              }
+          });
+    }
+}
+
+document.getElementById('editBankBalanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('/admin/update-bank-balance', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              location.reload();
+          } else {
+              alert('Erreur lors de la mise à jour du solde');
+          }
+      });
+});
+
+document.getElementById('depositForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('/admin/deposit', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              location.reload();
+          } else {
+              alert('Erreur lors du dépôt');
+          }
+      });
+});
+
+document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('/admin/withdraw', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              location.reload();
+          } else {
+              alert('Erreur lors du retrait');
+          }
+      });
+});
+</script>
+{% endblock %}

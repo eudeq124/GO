@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">{{ _('Bienvenue chez GOLDEAF Financial Inc') }}</h1>
+            <p class="hero-subtitle">{{ _('Votre partenaire financier de confiance pour un avenir prospère') }}</p>
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">{{ _('Commencer maintenant') }}</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">{{ _('Nos Services') }}</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <img src="{{ url_for('static', filename='images/feature1.jpg') }}" alt="Transferts" class="feature-image">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-exchange-alt me-2"></i>{{ _('Transferts Instantanés') }}</h3>
+                        <p class="card-text">{{ _('Effectuez des transferts sécurisés en temps réel vers n\'importe quel compte bancaire.') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <img src="{{ url_for('static', filename='images/feature2.jpg') }}" alt="Cartes" class="feature-image">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-credit-card me-2"></i>{{ _('Cartes Prépayées') }}</h3>
+                        <p class="card-text">{{ _('Gérez vos dépenses avec nos cartes prépayées sécurisées et pratiques.') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <img src="{{ url_for('static', filename='images/feature3.jpg') }}" alt="Sécurité" class="feature-image">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-shield-alt me-2"></i>{{ _('Sécurité Maximale') }}</h3>
+                        <p class="card-text">{{ _('Profitez d\'une protection de pointe pour toutes vos transactions.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-3">
+                <i class="fas fa-users fa-3x"></i>
+                <h3>100K+</h3>
+                <p>{{ _('Clients Satisfaits') }}</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-globe fa-3x"></i>
+                <h3>50+</h3>
+                <p>{{ _('Pays Desservis') }}</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-handshake fa-3x"></i>
+                <h3>1M+</h3>
+                <p>{{ _('Transactions par Jour') }}</p>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-award fa-3x"></i>
+                <h3>20+</h3>
+                <p>{{ _('Années d\'Excellence') }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">{{ _('Notre Équipe de Direction') }}</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="team-card text-center h-100">
+                    <div class="team-icon-wrapper mb-3">
+                        <i class="fas fa-user-tie fa-3x"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ _('Jean Dupont') }}</h4>
+                        <p class="text-muted">{{ _('PDG') }}</p>
+                        <p>{{ _('Plus de 25 ans d\'expérience dans le secteur bancaire.') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-card text-center h-100">
+                    <div class="team-icon-wrapper mb-3">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ _('Marie Martin') }}</h4>
+                        <p class="text-muted">{{ _('Directrice Financière') }}</p>
+                        <p>{{ _('Experte en stratégie financière et gestion des risques.') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-card text-center h-100">
+                    <div class="team-icon-wrapper mb-3">
+                        <i class="fas fa-laptop-code fa-3x"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ _('Thomas Bernard') }}</h4>
+                        <p class="text-muted">{{ _('Directeur Technique') }}</p>
+                        <p>{{ _('Pionnier dans l\'innovation technologique bancaire.') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="team-card text-center h-100">
+                    <div class="team-icon-wrapper mb-3">
+                        <i class="fas fa-cogs fa-3x"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ _('Sophie Petit') }}</h4>
+                        <p class="text-muted">{{ _('Directrice des Opérations') }}</p>
+                        <p>{{ _('Spécialiste en optimisation des processus bancaires.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

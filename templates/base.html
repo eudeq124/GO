@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="{{ g.lang_code }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GOLDEAF Financial Inc{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-university fa-lg me-2"></i>
+                GOLDEAF Financial Inc
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">{{ _('Accueil') }}</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_dashboard') }}">{{ _('Administration') }}</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('dashboard') }}">{{ _('Mon Compte') }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">{{ _('Déconnexion') }}</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">{{ _('Connexion') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">{{ _('Inscription') }}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <div class="language-selector">
+                    <select class="form-select form-select-sm" id="languageSelect" aria-label="{{ _('Changer de langue') }}">
+                        <option value="fr" {% if g.lang_code == 'fr' %}selected{% endif %}>Français</option>
+                        <option value="en" {% if g.lang_code == 'en' %}selected{% endif %}>English</option>
+                        <option value="es" {% if g.lang_code == 'es' %}selected{% endif %}>Español</option>
+                        <option value="de" {% if g.lang_code == 'de' %}selected{% endif %}>Deutsch</option>
+                        <option value="it" {% if g.lang_code == 'it' %}selected{% endif %}>Italiano</option>
+                        <option value="pt" {% if g.lang_code == 'pt' %}selected{% endif %}>Português</option>
+                        <option value="ru" {% if g.lang_code == 'ru' %}selected{% endif %}>Русский</option>
+                        <option value="zh" {% if g.lang_code == 'zh' %}selected{% endif %}>中文</option>
+                        <option value="ja" {% if g.lang_code == 'ja' %}selected{% endif %}>日本語</option>
+                        <option value="ko" {% if g.lang_code == 'ko' %}selected{% endif %}>한국어</option>
+                        <option value="ar" {% if g.lang_code == 'ar' %}selected{% endif %}>العربية</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-university me-2"></i>GOLDEAF Financial Inc</h5>
+                    <p>{{ _('Votre partenaire financier de confiance') }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>{{ _('Contact') }}</h5>
+                    <p>
+                        <i class="fas fa-phone"></i> +33 1 23 45 67 89<br>
+                        <i class="fas fa-envelope"></i> contact@goldeaf.com
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h5>{{ _('Liens utiles') }}</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light"><i class="fas fa-info-circle me-2"></i>{{ _('À propos') }}</a></li>
+                        <li><a href="#" class="text-light"><i class="fas fa-file-contract me-2"></i>{{ _('Conditions générales') }}</a></li>
+                        <li><a href="#" class="text-light"><i class="fas fa-shield-alt me-2"></i>{{ _('Politique de confidentialité') }}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Configuration avancée de Select2
+            $('#languageSelect').select2({
+                theme: "classic",
+                minimumResultsForSearch: Infinity,
+                dropdownAutoWidth: true,
+                width: 'auto',
+                templateResult: formatLanguage,
+                templateSelection: formatLanguage
+            });
+
+            // Formater l'affichage des langues avec leurs drapeaux
+            function formatLanguage(language) {
+                if (!language.id) return language.text;
+                const flags = {
+                    'fr': '🇫🇷',
+                    'en': '🇬🇧',
+                    'es': '🇪🇸',
+                    'de': '🇩🇪',
+                    'it': '🇮🇹',
+                    'pt': '🇵🇹',
+                    'ru': '🇷🇺',
+                    'zh': '🇨🇳',
+                    'ja': '🇯🇵',
+                    'ko': '🇰🇷',
+                    'ar': '🇸🇦'
+                };
+                return $(`<span><span class="flag-icon">${flags[language.id]}</span> ${language.text}</span>`);
+            }
+
+            // Gestion du changement de langue
+            $('#languageSelect').on('change', function() {
+                const lang = $(this).val();
+                const currentUrl = new URL(window.location.href);
+                
+                // Sauvegarder la préférence de langue
+                localStorage.setItem('preferredLanguage', lang);
+                
+                // Mettre à jour l'URL avec la nouvelle langue
+                currentUrl.searchParams.set('lang', lang);
+                
+                // Afficher un indicateur de chargement
+                showLoadingIndicator();
+                
+                // Recharger la page avec la nouvelle langue
+                fetch(currentUrl.toString(), {
+                    headers: {
+                        'Accept-Language': lang
+                    }
+                }).then(() => {
+                    window.location.href = currentUrl.toString();
+                });
+            });
+
+            // Restaurer la langue préférée
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && savedLang !== '{{ g.lang_code }}') {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('lang', savedLang);
+                window.location.href = currentUrl.toString();
+            }
+
+            // Fonction pour afficher l'indicateur de chargement
+            function showLoadingIndicator() {
+                const loadingHtml = `
+                    <div id="loading-overlay" style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    ">
+                        <div style="
+                            background: white;
+                            padding: 20px;
+                            border-radius: 10px;
+                            text-align: center;
+                        ">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2 mb-0">{{ _('Changement de langue...') }}</p>
+                        </div>
+                    </div>
+                `;
+                $('body').append(loadingHtml);
+            }
+        });
+
+        // Gestion de la réactivité du menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            navbarToggler.addEventListener('click', function() {
+                navbarCollapse.classList.toggle('show');
+            });
+
+            // Fermer le menu sur mobile lors du clic sur un lien
+            document.querySelectorAll('.navbar-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 992) {
+                        navbarCollapse.classList.remove('show');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
