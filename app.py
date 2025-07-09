@@ -104,6 +104,9 @@ def register():
             flash(_('Cet email est déjà utilisé.'), 'danger')
             return redirect(url_for('register'))
 
+        # Configuration spécifique à Vercel
+        is_vercel = os.getenv('VERCEL') == 'true'
+        
         hashed_password = generate_password_hash(form.password.data)
         new_user = User(
             nom=form.nom.data,
@@ -111,7 +114,8 @@ def register():
             email=form.email.data,
             password=hashed_password,
             date_naissance=form.date_naissance.data,
-            pays=form.pays.data
+            pays=form.pays.data,
+            email_confirme=is_vercel  # Email automatiquement confirmé sur Vercel
         )
         db.session.add(new_user)
         db.session.commit()
