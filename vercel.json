@@ -13,6 +13,9 @@
     }
   ],
   "env": {
-    "GUNICORN_CMD_ARGS": "--worker-class gevent"
+    "GUNICORN_CMD_ARGS": "--worker-class gevent",
+    "SECRET_KEY": "vercel_secret_key",
+    "EMAIL_USER": "",
+    "EMAIL_PASSWORD": ""
   }
 }

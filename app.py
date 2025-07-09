@@ -20,7 +20,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'banque.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuration email
@@ -402,7 +402,16 @@ def admin_withdraw():
 with app.app_context():
     db.create_all()
 
+def init_db():
+    with app.app_context():
+        db.create_all()
+
+@app.before_first_request
+def initialize_database():
+    init_db()
+
 if __name__ == '__main__':
+    init_db()
     # Modification pour que l'application écoute sur le port défini par Vercel
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
