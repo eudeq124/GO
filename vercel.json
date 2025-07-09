@@ -8,6 +8,14 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/templates/(.*)",
+      "dest": "/templates/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "app.py"
     }
@@ -17,5 +25,15 @@
     "SECRET_KEY": "vercel_secret_key",
     "EMAIL_USER": "",
     "EMAIL_PASSWORD": ""
-  }
+  },
+  "staticDirectories": [
+    {
+      "directory": "static",
+      "name": "static"
+    },
+    {
+      "directory": "templates",
+      "name": "templates"
+    }
+  ]
 }
