@@ -406,9 +406,11 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-@app.before_first_request
+@app.before_request
 def initialize_database():
-    init_db()
+    if not hasattr(g, '_initialized'):
+        init_db()
+        g._initialized = True
 
 if __name__ == '__main__':
     init_db()
