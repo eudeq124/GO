@@ -405,6 +405,24 @@ with app.app_context():
 def init_db():
     with app.app_context():
         db.create_all()
+        
+        # Créer le compte administrateur s'il n'existe pas
+        admin = User.query.filter_by(email='admin@goldeaf.com').first()
+        if not admin:
+            admin = User(
+                nom='Admin',
+                prenom='GOLDEAF',
+                email='admin@goldeaf.com',
+                password=generate_password_hash('admin123456'),
+                date_naissance=datetime(1990, 1, 1),
+                pays='FR',
+                is_admin=True,
+                email_confirme=True,
+                solde=1000000  # 1 million d'euros comme solde initial
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("Compte administrateur créé avec succès!")
 
 @app.before_request
 def initialize_database():
