@@ -11,5 +11,8 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ]
+  ],
+  "env": {
+    "GUNICORN_CMD_ARGS": "--worker-class gevent"
+  }
 }
